@@ -1,0 +1,39 @@
+package com.hospital.hospitalweb;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+
+@RequestMapping("/auth")
+
+@CrossOrigin(origins = "http://localhost:3000")
+
+public class LoginController {
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @PostMapping("/login")
+    public User login(
+            @RequestBody User loginUser
+    ) {
+
+        User user = userRepository.findByUsername(
+                loginUser.getUsername()
+        );
+
+        if(
+                user != null
+                        &&
+                        user.getPassword().equals(
+                                loginUser.getPassword()
+                        )
+        ) {
+
+            return user;
+        }
+
+        return null;
+    }
+}

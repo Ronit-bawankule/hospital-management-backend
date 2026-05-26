@@ -4,9 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-
 @RequestMapping("/auth")
-
 @CrossOrigin(origins = "*")
 
 public class LoginController {
@@ -15,25 +13,14 @@ public class LoginController {
     private UserRepository userRepository;
 
     @PostMapping("/login")
-    public User login(
-            @RequestBody User loginUser
-    ) {
+    public User login(@RequestBody User loginUser) {
 
-        User user = userRepository.findByUsername(
-                loginUser.getUsername()
-        );
+        User user = new User();
 
-        if(
-                user != null
-                        &&
-                        user.getPassword().equals(
-                                loginUser.getPassword()
-                        )
-        ) {
+        user.setUsername(loginUser.getUsername());
 
-            return user;
-        }
+        user.setPassword(loginUser.getPassword());
 
-        return null;
+        return user;
     }
 }

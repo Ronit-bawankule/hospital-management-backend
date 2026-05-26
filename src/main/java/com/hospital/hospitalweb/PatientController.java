@@ -7,7 +7,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/patients")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "*")
 
 public class PatientController {
 
@@ -42,7 +42,19 @@ public class PatientController {
 
             patient.setDisease(updatedPatient.getDisease());
 
-            patient.setDoctor(updatedPatient.getDoctor());
+            patient.setNurseName(updatedPatient.getNurseName());
+
+            patient.setNurseId(updatedPatient.getNurseId());
+
+            patient.setXray(updatedPatient.isXray());
+
+            patient.setMri(updatedPatient.isMri());
+
+            patient.setOperation(updatedPatient.isOperation());
+
+            patient.setIcu(updatedPatient.isIcu());
+
+            patient.setIcuDays(updatedPatient.getIcuDays());
 
             return patientRepository.save(patient);
         }

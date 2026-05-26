@@ -21,6 +21,8 @@ public class LoginController {
 
         user.setPassword(loginUser.getPassword());
 
+        user.setRole("ADMIN");
+
         return user;
     }
 }

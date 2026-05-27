@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 public class HospitalwebApplication {
+
     public static void main(String[] args) {
         SpringApplication.run(HospitalwebApplication.class, args);
     }

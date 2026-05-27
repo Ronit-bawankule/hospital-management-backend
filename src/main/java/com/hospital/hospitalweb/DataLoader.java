@@ -3,9 +3,6 @@ package com.hospital.hospitalweb;
 import com.hospital.hospitalweb.model.Role;
 import com.hospital.hospitalweb.model.User;
 import com.hospital.hospitalweb.repository.UserRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -13,34 +10,46 @@ import org.springframework.stereotype.Component;
 @Component
 public class DataLoader implements CommandLineRunner {
 
-    private static final Logger logger = LoggerFactory.getLogger(DataLoader.class);
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    public DataLoader(UserRepository userRepository,
+                      PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @Override
     public void run(String... args) {
-        seedUser("Admin User",        "admin@hospital.com",     "admin123",     Role.ADMIN);
-        seedUser("Dr. John Smith",    "doctor@hospital.com",    "doctor123",    Role.DOCTOR);
-        seedUser("Reception Staff",   "reception@hospital.com", "reception123", Role.RECEPTIONIST);
-    }
 
-    private void seedUser(String name, String email, String password, Role role) {
-        if (!userRepository.existsByEmail(email)) {
-            User user = User.builder()
-                    .name(name)
-                    .email(email)
-                    .password(passwordEncoder.encode(password))
-                    .role(role)
-                    .enabled(true)
-                    .build();
-            userRepository.save(user);
-            logger.info("Seeded user: {} [{}]", email, role);
-        } else {
-            logger.info("User already exists: {}", email);
+        if (userRepository.findByEmail("admin@hospital.com").isEmpty()) {
+
+            User admin = new User(
+                    "Admin",
+                    "admin@hospital.com",
+                    passwordEncoder.encode("admin123"),
+                    Role.ADMIN
+            );
+
+            User doctor = new User(
+                    "Doctor",
+                    "doctor@hospital.com",
+                    passwordEncoder.encode("doctor123"),
+                    Role.DOCTOR
+            );
+
+            User reception = new User(
+                    "Reception",
+                    "reception@hospital.com",
+                    passwordEncoder.encode("reception123"),
+                    Role.RECEPTIONIST
+            );
+
+            userRepository.save(admin);
+            userRepository.save(doctor);
+            userRepository.save(reception);
+
+            System.out.println("Default users created.");
         }
     }
 }

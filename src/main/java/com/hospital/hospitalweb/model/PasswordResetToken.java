@@ -1,32 +1,46 @@
 package com.hospital.hospitalweb.model;
 
 import jakarta.persistence.*;
-import lombok.*;
+
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
-@Table(name = "password_reset_tokens")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class PasswordResetToken {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
     private String token;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "user_id", nullable = false)
+    @OneToOne
     private User user;
 
-    @Column(nullable = false)
     private LocalDateTime expiryDate;
 
-    public boolean isExpired() {
-        return LocalDateTime.now().isAfter(expiryDate);
+    public PasswordResetToken() {
+    }
+
+    public PasswordResetToken(User user) {
+        this.user = user;
+        this.token = UUID.randomUUID().toString();
+        this.expiryDate = LocalDateTime.now().plusHours(1);
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public LocalDateTime getExpiryDate() {
+        return expiryDate;
     }
 }

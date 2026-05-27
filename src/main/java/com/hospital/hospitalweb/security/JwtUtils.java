@@ -1,10 +1,9 @@
 package com.hospital.hospitalweb.security;
 
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
-import jakarta.annotation.PostConstruct;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
@@ -13,29 +12,24 @@ import java.util.Date;
 @Component
 public class JwtUtils {
 
-    @Value("${app.jwtSecret}")
-    private String jwtSecret;
+    private static final String JWT_SECRET =
+            "hospitalmanagementsystemsecurejwtsecretkey123456";
 
-    @Value("${app.jwtExpirationMs}")
-    private int jwtExpirationMs;
+    private static final long JWT_EXPIRATION =
+            1000 * 60 * 60 * 24;
 
-    private Key key;
+    private final Key key =
+            Keys.hmacShaKeyFor(JWT_SECRET.getBytes());
 
-    @PostConstruct
-    public void init() {
-        this.key = Keys.hmacShaKeyFor(jwtSecret.getBytes());
-    }
-
-    public String generateJwtToken(Authentication authentication) {
-
-        String username = authentication.getName();
+    public String generateToken(String email) {
 
         return Jwts.builder()
-                .setSubject(username)
+                .setSubject(email)
                 .setIssuedAt(new Date())
                 .setExpiration(
                         new Date(
-                                (new Date()).getTime() + jwtExpirationMs
+                                System.currentTimeMillis()
+                                        + JWT_EXPIRATION
                         )
                 )
                 .signWith(key, SignatureAlgorithm.HS256)
@@ -44,26 +38,27 @@ public class JwtUtils {
 
     public String getUserNameFromJwtToken(String token) {
 
-        return Jwts.parserBuilder()
+        Claims claims = Jwts.parserBuilder()
                 .setSigningKey(key)
                 .build()
                 .parseClaimsJws(token)
-                .getBody()
-                .getSubject();
+                .getBody();
+
+        return claims.getSubject();
     }
 
-    public boolean validateJwtToken(String authToken) {
+    public boolean validateJwtToken(String token) {
 
         try {
 
             Jwts.parserBuilder()
                     .setSigningKey(key)
                     .build()
-                    .parseClaimsJws(authToken);
+                    .parseClaimsJws(token);
 
             return true;
 
-        } catch (JwtException e) {
+        } catch (Exception e) {
 
             return false;
         }

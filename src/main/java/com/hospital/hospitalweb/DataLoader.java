@@ -3,34 +3,36 @@ package com.hospital.hospitalweb;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 public class DataLoader {
 
     @Bean
-    CommandLineRunner loadData(UserRepository userRepository) {
-
+    CommandLineRunner loadData(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         return args -> {
 
-            userRepository.deleteAll();
-
-            User admin = new User();
-            admin.setUsername("admin");
-            admin.setPassword("admin123");
-            admin.setRole("ADMIN");
-            userRepository.save(admin);
-
-            User doctor = new User();
-            doctor.setUsername("doctor");
-            doctor.setPassword("doctor123");
-            doctor.setRole("DOCTOR");
-            userRepository.save(doctor);
-
-            User reception = new User();
-            reception.setUsername("reception");
-            reception.setPassword("reception123");
-            reception.setRole("RECEPTIONIST");
-            userRepository.save(reception);
+            createIfMissing(userRepository, passwordEncoder, "Admin User", "admin@hospital.com", "admin123", "ADMIN");
+            createIfMissing(userRepository, passwordEncoder, "Doctor User", "doctor@hospital.com", "doctor123", "DOCTOR");
+            createIfMissing(userRepository, passwordEncoder, "Reception User", "reception@hospital.com", "reception123", "RECEPTIONIST");
         };
+    }
+
+    private void createIfMissing(
+            UserRepository userRepository,
+            PasswordEncoder passwordEncoder,
+            String fullName,
+            String email,
+            String password,
+            String role
+    ) {
+        if (userRepository.findByEmail(email).isEmpty()) {
+            User user = new User();
+            user.setFullName(fullName);
+            user.setEmail(email);
+            user.setPassword(passwordEncoder.encode(password));
+            user.setRole(role);
+            userRepository.save(user);
+        }
     }
 }

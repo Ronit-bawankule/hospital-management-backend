@@ -15,14 +15,27 @@ public class LoginController {
     @PostMapping("/login")
     public User login(@RequestBody User loginUser) {
 
-        User user = new User();
+        User user = userRepository.findByUsername(
+                loginUser.getUsername()
+        );
 
-        user.setUsername(loginUser.getUsername());
+        if(
+                user != null
+                        &&
+                        user.getPassword().equals(
+                                loginUser.getPassword()
+                        )
+        ) {
 
-        user.setPassword(loginUser.getPassword());
+            return user;
+        }
 
-        user.setRole("ADMIN");
+        return null;
+    }
 
-        return user;
+    @PostMapping("/register")
+    public User register(@RequestBody User user) {
+
+        return userRepository.save(user);
     }
 }

@@ -15,14 +15,16 @@ public class DataLoader implements CommandLineRunner {
 
     public DataLoader(
             UserRepository userRepository,
-            PasswordEncoder passwordEncoder) {
-
+            PasswordEncoder passwordEncoder
+    ) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
     @Override
     public void run(String... args) {
+
+        userRepository.deleteAll();
 
         createUser(
                 "Admin",
@@ -45,17 +47,15 @@ public class DataLoader implements CommandLineRunner {
                 Role.RECEPTIONIST
         );
 
-        System.out.println("Default users created.");
+        System.out.println("Default users created successfully.");
     }
 
     private void createUser(
             String name,
             String email,
             String password,
-            Role role) {
-
-        userRepository.findByEmail(email)
-                .ifPresent(userRepository::delete);
+            Role role
+    ) {
 
         User user = new User();
 

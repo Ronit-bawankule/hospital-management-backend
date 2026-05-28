@@ -1,4 +1,4 @@
-package com.hospital.hospitalweb.service;
+package com.hospital.hospitalweb.security;
 
 import com.hospital.hospitalweb.model.User;
 import com.hospital.hospitalweb.repository.UserRepository;
@@ -8,7 +8,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
+import java.util.List;
 
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
@@ -23,14 +23,18 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(String email)
             throws UsernameNotFoundException {
 
-        User user = userRepository.findByEmail(email)
+        User user = userRepository
+                .findByEmail(email)
                 .orElseThrow(() ->
-                        new UsernameNotFoundException("User not found"));
+                        new UsernameNotFoundException(
+                                "User not found"
+                        )
+                );
 
         return new org.springframework.security.core.userdetails.User(
                 user.getEmail(),
                 user.getPassword(),
-                Collections.singletonList(
+                List.of(
                         new SimpleGrantedAuthority(
                                 "ROLE_" + user.getRole().name()
                         )

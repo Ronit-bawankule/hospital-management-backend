@@ -1,6 +1,5 @@
 package com.hospital.hospitalweb.security;
 
-import com.hospital.hospitalweb.service.UserDetailsServiceImpl;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

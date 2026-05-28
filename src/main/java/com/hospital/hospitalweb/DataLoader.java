@@ -13,8 +13,10 @@ public class DataLoader implements CommandLineRunner {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public DataLoader(UserRepository userRepository,
-                      PasswordEncoder passwordEncoder) {
+    public DataLoader(
+            UserRepository userRepository,
+            PasswordEncoder passwordEncoder) {
+
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
@@ -22,34 +24,50 @@ public class DataLoader implements CommandLineRunner {
     @Override
     public void run(String... args) {
 
-        if (userRepository.findByEmail("admin@hospital.com").isEmpty()) {
+        createUser(
+                "Admin",
+                "admin@hospital.com",
+                "admin123",
+                Role.ADMIN
+        );
 
-            User admin = new User(
-                    "Admin",
-                    "admin@hospital.com",
-                    passwordEncoder.encode("admin123"),
-                    Role.ADMIN
-            );
+        createUser(
+                "Doctor",
+                "doctor@hospital.com",
+                "doctor123",
+                Role.DOCTOR
+        );
 
-            User doctor = new User(
-                    "Doctor",
-                    "doctor@hospital.com",
-                    passwordEncoder.encode("doctor123"),
-                    Role.DOCTOR
-            );
+        createUser(
+                "Reception",
+                "reception@hospital.com",
+                "reception123",
+                Role.RECEPTIONIST
+        );
 
-            User reception = new User(
-                    "Reception",
-                    "reception@hospital.com",
-                    passwordEncoder.encode("reception123"),
-                    Role.RECEPTIONIST
-            );
+        System.out.println("Default users created.");
+    }
 
-            userRepository.save(admin);
-            userRepository.save(doctor);
-            userRepository.save(reception);
+    private void createUser(
+            String name,
+            String email,
+            String password,
+            Role role) {
 
-            System.out.println("Default users created.");
-        }
+        userRepository.findByEmail(email)
+                .ifPresent(userRepository::delete);
+
+        User user = new User();
+
+        user.setName(name);
+        user.setEmail(email);
+
+        user.setPassword(
+                passwordEncoder.encode(password)
+        );
+
+        user.setRole(role);
+
+        userRepository.save(user);
     }
 }

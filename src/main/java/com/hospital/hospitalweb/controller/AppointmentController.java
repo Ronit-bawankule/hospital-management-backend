@@ -1,33 +1,47 @@
 package com.hospital.hospitalweb.controller;
 
 import com.hospital.hospitalweb.model.Appointment;
-import com.hospital.hospitalweb.repository.AppointmentRepository;
+import com.hospital.hospitalweb.service.AppointmentService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/appointments")
-@CrossOrigin(origins = "*")
+@CrossOrigin("*")
 public class AppointmentController {
 
-    private final AppointmentRepository appointmentRepository;
+    private final AppointmentService appointmentService;
 
     public AppointmentController(
-            AppointmentRepository appointmentRepository) {
+            AppointmentService appointmentService
+    ) {
+        this.appointmentService =
+                appointmentService;
+    }
 
-        this.appointmentRepository = appointmentRepository;
+    @PostMapping
+    public Appointment addAppointment(
+            @RequestBody Appointment appointment
+    ) {
+
+        return appointmentService.addAppointment(
+                appointment
+        );
     }
 
     @GetMapping
     public List<Appointment> getAllAppointments() {
-        return appointmentRepository.findAll();
+
+        return appointmentService
+                .getAllAppointments();
     }
 
-    @PostMapping
-    public Appointment createAppointment(
-            @RequestBody Appointment appointment) {
+    @DeleteMapping("/{id}")
+    public void deleteAppointment(
+            @PathVariable Long id
+    ) {
 
-        return appointmentRepository.save(appointment);
+        appointmentService.deleteAppointment(id);
     }
 }

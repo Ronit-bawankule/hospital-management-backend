@@ -3,19 +3,27 @@ package com.hospital.hospitalweb.model;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 @Entity
+@Table(name = "appointments")
 public class Appointment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String patientName;
+    @ManyToOne
+    @JoinColumn(name = "patient_id")
+    private Patient patient;
 
-    private String doctorName;
+    @ManyToOne
+    @JoinColumn(name = "doctor_id")
+    private Doctor doctor;
 
     private LocalDate appointmentDate;
+
+    private LocalTime appointmentTime;
 
     private String status;
 
@@ -26,20 +34,20 @@ public class Appointment {
         return id;
     }
 
-    public String getPatientName() {
-        return patientName;
+    public Patient getPatient() {
+        return patient;
     }
 
-    public void setPatientName(String patientName) {
-        this.patientName = patientName;
+    public void setPatient(Patient patient) {
+        this.patient = patient;
     }
 
-    public String getDoctorName() {
-        return doctorName;
+    public Doctor getDoctor() {
+        return doctor;
     }
 
-    public void setDoctorName(String doctorName) {
-        this.doctorName = doctorName;
+    public void setDoctor(Doctor doctor) {
+        this.doctor = doctor;
     }
 
     public LocalDate getAppointmentDate() {
@@ -48,6 +56,14 @@ public class Appointment {
 
     public void setAppointmentDate(LocalDate appointmentDate) {
         this.appointmentDate = appointmentDate;
+    }
+
+    public LocalTime getAppointmentTime() {
+        return appointmentTime;
+    }
+
+    public void setAppointmentTime(LocalTime appointmentTime) {
+        this.appointmentTime = appointmentTime;
     }
 
     public String getStatus() {

@@ -1,29 +1,55 @@
 package com.hospital.hospitalweb.controller;
 
 import com.hospital.hospitalweb.model.Patient;
-import com.hospital.hospitalweb.repository.PatientRepository;
+import com.hospital.hospitalweb.service.PatientService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/patients")
-@CrossOrigin(origins = "*")
+@CrossOrigin("*")
 public class PatientController {
 
-    private final PatientRepository patientRepository;
+    private final PatientService patientService;
 
-    public PatientController(PatientRepository patientRepository) {
-        this.patientRepository = patientRepository;
+    public PatientController(
+            PatientService patientService
+    ) {
+        this.patientService = patientService;
+    }
+
+    @PostMapping
+    public Patient addPatient(
+            @RequestBody Patient patient
+    ) {
+
+        return patientService.addPatient(patient);
     }
 
     @GetMapping
     public List<Patient> getAllPatients() {
-        return patientRepository.findAll();
+
+        return patientService.getAllPatients();
     }
 
-    @PostMapping
-    public Patient createPatient(@RequestBody Patient patient) {
-        return patientRepository.save(patient);
+    @PutMapping("/{id}")
+    public Patient updatePatient(
+            @PathVariable Long id,
+            @RequestBody Patient patient
+    ) {
+
+        return patientService.updatePatient(
+                id,
+                patient
+        );
+    }
+
+    @DeleteMapping("/{id}")
+    public void deletePatient(
+            @PathVariable Long id
+    ) {
+
+        patientService.deletePatient(id);
     }
 }
